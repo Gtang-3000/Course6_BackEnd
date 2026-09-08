@@ -8,13 +8,13 @@ namespace BookMatain.Controllers
 {
     public class BookController : Controller
     {
-        private readonly BookService _bookService;
-        private readonly CodeService _codeService;
+        private readonly BookMatain.Service.IBookService _bookService;
+        private readonly BookMatain.Service.ICodeService _codeService;
 
-        public BookController()
+        public BookController(BookMatain.Service.IBookService bookService , BookMatain.Service.ICodeService codeService)
         {
-            _bookService = new BookService();
-            _codeService = new CodeService();
+            _bookService = bookService;
+            _codeService = codeService;
         }
 
         [HttpGet]

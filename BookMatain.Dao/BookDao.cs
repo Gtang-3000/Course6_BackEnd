@@ -11,6 +11,7 @@ namespace BookMatain.Dao
 {
     public class BookDao : IBookDao
     {
+
         /// <summary>
         /// 按給出的條件查書
         /// </summary>

@@ -11,8 +11,8 @@ namespace BookMatain.Dao
 {
     public class CodeDao : ICodeDao
     {
-        DataTable dt = new();
-        SqlConnection conn = new(Common.ConfigTool.GetDBConnectionString());
+        private readonly DataTable dt = new();
+        private readonly SqlConnection conn = new(Common.ConfigTool.GetDBConnectionString());
         public List<SelectListItem> GetBookClassData()
         {
             string sql = "SELECT CONCAT(BOOK_CLASS_ID, '-',BOOK_CLASS_NAME) AS [書籍類別],BOOK_CLASS_ID FROM BOOK_CLASS ";

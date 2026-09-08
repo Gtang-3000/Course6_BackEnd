@@ -8,20 +8,26 @@ using System.Threading.Tasks;
 
 namespace BookMatain.Service
 {
-    public class CodeService
+    public class CodeService : ICodeService
     {
-        Dao.CodeDao codeDao = new();
+        private readonly BookMatain.Dao.ICodeDao  _codeDao;
+
+        public CodeService(BookMatain.Dao.ICodeDao codeDao)
+        {
+            _codeDao = codeDao;
+        }
+
         public List<SelectListItem> GetBookClassData()
-        {            
-            return codeDao.GetBookClassData();
+        {
+            return _codeDao.GetBookClassData();
         }
         public List<SelectListItem> GetBookStatus()
         {
-            return codeDao.GetBookStatus();
+            return _codeDao.GetBookStatus();
         }
         public List<SelectListItem> GetBookKeeperData()
         {
-            return codeDao.GetBookKeeperData();
+            return _codeDao.GetBookKeeperData();
         }
     }
 }

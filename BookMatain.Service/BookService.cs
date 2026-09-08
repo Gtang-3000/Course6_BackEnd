@@ -8,9 +8,14 @@ using System.Threading.Tasks;
 
 namespace BookMatain.Service
 {
-    public class BookService
+    public class BookService : IBookService
     {
-        Dao.BookDao bookDao = new();
+        private readonly BookMatain.Dao.IBookDao  _bookDao;
+
+        public BookService(BookMatain.Dao.IBookDao bookDao)
+        {
+            _bookDao = bookDao;
+        }
         /// <summary>
         /// 按給出的條件查書
         /// </summary>
@@ -18,7 +23,7 @@ namespace BookMatain.Service
         /// <returns>List<BookData></returns>
         public List<BookData> FilterBook(BookSerchArg serchArg)
         {
-           return bookDao.FilterBook(serchArg);
+            return _bookDao.FilterBook(serchArg);
         }
         /// <summary>
         /// 把DataTable變成List<BookData>
@@ -27,7 +32,7 @@ namespace BookMatain.Service
         /// <returns>List<BookData></returns>
         public string InsertBook(BookDataForEdit bookData)
         {
-            return bookDao.InsertBook(bookData);
+            return _bookDao.InsertBook(bookData);
         }
         /// <summary>
         /// 修改資料庫資料
@@ -35,7 +40,7 @@ namespace BookMatain.Service
         /// <param name="bookData"></param>
         public void UpdateBook(BookDataForEdit bookData)
         {
-            bookDao.UpdateBook(bookData);
+            _bookDao.UpdateBook(bookData);
         }
 
         /// <summary>
@@ -46,7 +51,7 @@ namespace BookMatain.Service
         /// <returns>BookDataForEdit</returns>
         public BookDataForEdit GetBookData(string bookID)
         {
-            return bookDao.GetBookData(bookID);
+            return _bookDao.GetBookData(bookID);
         }
         /// <summary>
         /// 如果書被借走就不刪 不然就刪
@@ -55,7 +60,7 @@ namespace BookMatain.Service
         /// <returns>True刪  False不刪</returns>
         public bool DeleteBook(string BookID)
         {
-            return bookDao.DeleteBook(BookID);
+            return _bookDao.DeleteBook(BookID);
         }
         /// <summary>
         /// 已借出B 或 已借出(未領)C 要有借閱人
@@ -69,7 +74,7 @@ namespace BookMatain.Service
         /// </returns>
         public bool CheckBookHaveKeeperAndStatus(BookDataForEdit bookData)
         {
-            return bookDao.CheckBookHaveKeeperAndStatus(bookData);
+            return _bookDao.CheckBookHaveKeeperAndStatus(bookData);
         }
     }
 }
