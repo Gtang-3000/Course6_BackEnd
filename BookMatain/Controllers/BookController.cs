@@ -8,6 +8,15 @@ namespace BookMatain.Controllers
 {
     public class BookController : Controller
     {
+        private readonly BookService _bookService;
+        private readonly CodeService _codeService;
+
+        public BookController()
+        {
+            _bookService = new BookService();
+            _codeService = new CodeService();
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -16,91 +25,170 @@ namespace BookMatain.Controllers
         [HttpPost]
         public IActionResult GetBookBySerch(BookSerchArg bookSerchArg)
         {
-            BookService bookService = new();
-            var Result = bookService.FilterBook(bookSerchArg);
+            try {
+                var Result = _bookService.FilterBook(bookSerchArg);
             return Json(Result);
+            }
+            catch (Exception ex)
+            {
+                BookMatain.Common.Logger.Write(ex.Message, BookMatain.Common.Logger.LogCategoryEnum.Error);
+                return View("Error");
+            }
         }
         [HttpPost]
         public IActionResult GetBookDataByID(string BookID)
         {
-            BookService bookService = new();
-            var Result = bookService.GetBookData(BookID);
-
-            return Json(Result);
+            try
+            {
+                var Result = _bookService.GetBookData(BookID);
+                return Json(Result);
+            }
+            catch (Exception ex)
+            {
+                BookMatain.Common.Logger.Write(ex.Message, BookMatain.Common.Logger.LogCategoryEnum.Error);
+                return View("Error");
+            }
+            
         }
         [HttpPost]
         public IActionResult GetBookClassSelectData()
         {
-            CodeService codeService = new();
-            var Result = codeService.GetBookClassData();
-            return Json(Result);
+            try
+            {
+                var Result = _codeService.GetBookClassData();
+                return Json(Result);
+            }
+            catch (Exception ex)
+            {
+                BookMatain.Common.Logger.Write(ex.Message, BookMatain.Common.Logger.LogCategoryEnum.Error);
+                return View("Error");
+            }
         }
         public IActionResult GetBookStatusSelectData()
         {
-            CodeService codeService = new();
-            var Result = codeService.GetBookStatus();
-            return Json(Result);
+            try
+            {
+                var Result = _codeService.GetBookStatus();
+                return Json(Result);
+            }
+            catch (Exception ex)
+            {
+                BookMatain.Common.Logger.Write(ex.Message, BookMatain.Common.Logger.LogCategoryEnum.Error);
+                return View("Error");
+            }   
         }
+         
         public IActionResult GetBookKeeperSelectData()
         {
-            CodeService codeService = new();
-            var Result = codeService.GetBookKeeperData();
-            return Json(Result);
+            try
+            {
+                var Result = _codeService.GetBookKeeperData();
+                return Json(Result);
+            }
+            catch (Exception ex)
+            {
+                BookMatain.Common.Logger.Write(ex.Message, BookMatain.Common.Logger.LogCategoryEnum.Error);
+                return View("Error");
+            }
         }
-
         [HttpPost]
         public IActionResult Delete(string BookID)
         {
-            BookService bookService = new();
-            return Json(bookService.DeleteBook(BookID));
+            try
+            {
+                var Result = _bookService.DeleteBook(BookID);
+                return Json(Result);
+            }
+            catch (Exception ex)
+            {
+                BookMatain.Common.Logger.Write(ex.Message, BookMatain.Common.Logger.LogCategoryEnum.Error);
+                return View("Error");
+            }
         }
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            try { 
+                return View();
+            }
+            catch (Exception ex)
+            {
+                BookMatain.Common.Logger.Write(ex.Message, BookMatain.Common.Logger.LogCategoryEnum.Error);
+                return View("Error");
+            }
         }
         [HttpPost]
         public IActionResult Create(BookDataForEdit bookData)
         {
-            BookService bookService = new();
-            ModelState.Remove("Status");
-            ModelState.Remove("BookID");
-            ModelState.Remove("Keeper");
-            if (ModelState.IsValid)
+            try
             {
-                return Json(bookService.InsertBook(bookData));
+                ModelState.Remove("Status");
+                ModelState.Remove("BookID");
+                ModelState.Remove("Keeper");
+                if (ModelState.IsValid)
+                {
+                    return Json(_bookService.InsertBook(bookData));
+                }
+                return Json("");
             }
-            return Json("");
+            catch (Exception)
+            {
+                return View("Error");
+            }
         }
         [HttpGet]
         public IActionResult Update(string BookID)
         {
-            return View();
+            try { 
+                return View();
+            }
+            catch (Exception ex)
+            {
+                BookMatain.Common.Logger.Write(ex.Message, BookMatain.Common.Logger.LogCategoryEnum.Error);
+                return View("Error");
+            }
         }
         [HttpPost]
         public IActionResult Update(BookDataForEdit bookData)
         {
-            BookService bookService = new();
-            if (ModelState.IsValid)
+            try
             {
-                if (bookService.CheckBookHaveKeeperAndStatus(bookData))
+                if (ModelState.IsValid)
                 {
-                    bookService.UpdateBook(bookData);
-                    return Json("儲存了");
+                    if (_bookService.CheckBookHaveKeeperAndStatus(bookData))
+                    {
+                        _bookService.UpdateBook(bookData);
+                        return Json("儲存了");
+                    }
+                    else
+                    {
+                        return Json("沒存成功\n資料沒填完");
+                    }
                 }
                 else
                 {
                     return Json("沒存成功\r\n已借出 或 已借出(未領) 要有借閱人\r\n可以借出 或 不可借出 不能有借閱人");
                 }
             }
-            return Json("沒存成功\r\n資料填寫不完全");
+            catch (Exception ex)
+            {
+                BookMatain.Common.Logger.Write(ex.Message, BookMatain.Common.Logger.LogCategoryEnum.Error);
+                return View("Error");
+            }
         }
         [HttpGet]
         public IActionResult Detail(string BookID)
         {
-            BookService bookService = new();
-            var Book = bookService.GetBookData(BookID);
-            return View(Book);
+            try
+            {
+                var Book = _bookService.GetBookData(BookID);
+                return View(Book);
+            }
+            catch (Exception ex)
+            {
+                BookMatain.Common.Logger.Write(ex.Message, BookMatain.Common.Logger.LogCategoryEnum.Error);
+                return View("Error");
+            }
         }
     }
 }

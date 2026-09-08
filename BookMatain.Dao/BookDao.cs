@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BookMatain.Dao
 {
-    public class BookDao
+    public class BookDao : IBookDao
     {
         /// <summary>
         /// 按給出的條件查書

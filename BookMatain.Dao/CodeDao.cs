@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BookMatain.Dao
 {
-    public class CodeDao
+    public class CodeDao : ICodeDao
     {
         DataTable dt = new();
         SqlConnection conn = new(Common.ConfigTool.GetDBConnectionString());
@@ -17,7 +17,6 @@ namespace BookMatain.Dao
         {
             string sql = "SELECT CONCAT(BOOK_CLASS_ID, '-',BOOK_CLASS_NAME) AS [書籍類別],BOOK_CLASS_ID FROM BOOK_CLASS ";
 
-            
             using (conn)
             {
                 SqlCommand cmd = new(sql, conn);
@@ -30,7 +29,7 @@ namespace BookMatain.Dao
         {
             string sql = "SELECT CONCAT(CODE_ID, '-',CODE_NAME) AS [狀態],CODE_ID  FROM BOOK_CODE  WHERE CODE_TYPE = 'BOOK_STATUS'";
 
-            using(conn)
+            using (conn)
             {
                 SqlCommand cmd = new(sql, conn);
                 SqlDataAdapter sqlDataAdapter = new(cmd);
@@ -41,7 +40,7 @@ namespace BookMatain.Dao
         public List<SelectListItem> GetBookKeeperData()
         {
             string sql = "SELECT DISTINCT CONCAT(USER_ENAME, '-' ,USER_CNAME) AS [借閱人] , USER_ID FROM MEMBER_M ORDER BY 借閱人";
-            
+
             using (conn)
             {
                 SqlCommand cmd = new(sql, conn);

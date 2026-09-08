@@ -15,7 +15,7 @@ namespace BookMatain.Modle
         [DisplayName("書名")]
         [StringLength(400, ErrorMessage = "書名太長了")]
         [Required(ErrorMessage = "此欄位必填")]
-        public string? BookName { get; set; }
+        public string BookName { get; set; }
 
         [DisplayName("作者")]
         [StringLength(60, ErrorMessage = "太長了")]
