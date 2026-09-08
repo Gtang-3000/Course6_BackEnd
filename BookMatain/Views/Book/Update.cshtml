@@ -1,0 +1,189 @@
+﻿<h1>Updtae</h1>
+<div class="row">
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th><label>書名 <span class="text-danger">*</span></label></th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookName" name="BookName" type="text" value="">
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BookName" data-valmsg-replace="true"></span>
+                </th>
+            </tr>
+            <tr>
+                <th><label>作者 <span class="text-danger">*</span></label></th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookAuthor" name="BookAuthor" type="text">
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BookAuthor" data-valmsg-replace="true"></span>
+                </th>
+            </tr>
+            <tr>
+                <th><label>出版商 <span class="text-danger">*</span></label></th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookPublishier" name="BookPublishier" type="text">
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BookPublishier" data-valmsg-replace="true"></span>
+                </th>
+            </tr>
+            <tr>
+                <th><label>內容簡介<span class="text-danger">*</span></label></th>
+                <th>
+                    <textarea class="form-control" data-val="true" data-val-required="此欄位必填" id="BookNote" name="BookNote" row="2"></textarea>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BookNote" data-valmsg-replace="true"></span>
+                </th>
+            </tr>
+            <tr>
+                <th><label>購書日期<span class="text-danger">*</span></label></th>
+                <th><input class="form-control" id="BookBoughtDate" name="BookBoughtDate" value=""></th>
+            </tr>
+            <tr>
+                <th><label>圖書類別<span class="text-danger">*</span></label></th>
+                <th><select class="form-select" id="BookClassId" name="BookClassId"></select></th>
+            </tr>
+            <tr>
+                <th><label>借閱狀態<span class="text-danger">*</span></label></th>
+                <th><select class="form-select" id="Status" name="Status"></select>
+            </tr>
+            <tr>
+                <th><label>借閱人</label></th>
+                <th><select class="form-select" id="Keeper" name="Keeper"></select>
+            </tr>
+            <tr>
+                <th></th>
+                <td style="text-align: right;">
+                    <button type="button" class="btn btn-primary btnSave">儲存</button>
+                    <button type="button" class="btn btn-primary btnDelete">刪除</button>
+                </td>
+            </tr>
+        </thead>
+    </table>
+
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            loadBookClassData();
+            loadBookStatusData();
+            loadBookKeeperData();
+            loadBookDataByID();
+
+
+            $("#BookBoughtDate").kendoDatePicker({
+                format: "yyyy/MM/dd",
+                dateInput: true,
+                autoAdjust: false
+            });
+            $(".btnSave").click(function (e) {
+                if (!confirm("確定儲存嗎")) {
+                    e.preventDefault();
+                    return;
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/Book/Update",
+                    data: {
+                        BookID: new URLSearchParams(window.location.search).get("bookID"),
+                        BookName: $("#BookName").val(),
+                        BookAuthor: $("#BookAuthor").val(),
+                        BookPublishier: $("#BookPublishier").val(),
+                        BookNote: $("#BookNote").val(),
+                        BookBoughtDate: $("#BookBoughtDate").val(),
+                        BookClassID: $("#BookClassId").val(),
+                        Status: $("#Status").val(),
+                        Keeper: $("#Keeper").val()
+                    },
+                    success: function (response) {
+                        alert(response);
+                        window.location.href = "/Book/Update" + window.location.search ;
+                    },
+                });
+
+            });
+        });
+
+        function loadBookDataByID() {
+            $.ajax({
+                type: "POST",
+                url: "/Book/GetBookDataByID" + window.location.search ,
+                success: function (response) {
+                    console.log(response);
+                    $("#BookName").val(response.bookName);
+                    $("#BookAuthor").val(response.bookAuthor);
+                    $("#BookPublishier").val(response.bookPublishier);
+                    $("#BookNote").val(response.bookNote);
+                    $("#BookBoughtDate").val(response.bookBoughtDate);
+                    $("#BookClassId").data("kendoDropDownList").value(response.bookClassID);
+                    $("#Status").data("kendoDropDownList").value(response.status);
+                    $("#Keeper").data("kendoDropDownList").value(response.keeper);
+                },
+            });
+        };
+        function loadBookClassData() {
+            $.ajax({
+                type: "POST",
+                url: "/Book/GetBookClassSelectData",
+                success: function (response) {
+                    $("#BookClassId").kendoDropDownList({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: response,
+                    });
+                },
+            });
+
+        };
+        function loadBookStatusData() {
+            $.ajax({
+                type: "POST",
+                url: "/Book/GetBookStatusSelectData",
+                success: function (response) {
+                    $("#Status").kendoDropDownList({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: response,
+                    });
+                },
+            });
+        };
+        function loadBookKeeperData() {
+            $.ajax({
+                type: "POST",
+                url: "/Book/GetBookKeeperSelectData",
+                success: function (response) {
+                    $("#Keeper").kendoDropDownList({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: response,
+                        optionLabel: "無",
+                        index: 0
+                    });
+                },
+            });
+        };
+
+        $(".btnDelete").click(function (e) {
+            if (!confirm("確定刪除嗎")) {
+                return;
+            };
+            $.ajax({
+                type: "POST",
+                url: "/Book/Delete",
+                data: {
+                    BookID: new URLSearchParams(window.location.search).get("bookID"),
+                },
+                success: function (response) {
+                    if (response) {
+                        alert("刪除完成 退回搜尋頁面");
+                        window.location.href = "/Book/Index";
+                    }
+                    else {
+                        alert("書被借走了 不能刪");
+                    }
+                },
+            });
+        });
+
+    </script>
+}
+

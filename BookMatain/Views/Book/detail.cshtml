@@ -1,0 +1,89 @@
+﻿<h1>Detail</h1>
+@Html.ActionLink("首頁", "index", "Book", null, new { @class = "btn btn-primary" })
+
+
+<div class="row">
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th><label>書名 <span class="text-danger">*</span></label></th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookName" name="BookName" type="text" readonly="readonly">
+                </th>
+            </tr>
+            <tr>
+                <th><label>作者 <span class="text-danger">*</span></label></th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookAuthor" name="BookAuthor" type="text" readonly="readonly">
+                </th>
+            </tr>
+            <tr>
+                <th><label>出版商 <span class="text-danger">*</span></label></th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookPublishier" name="BookPublishier" type="text" readonly="readonly">
+                </th>
+            </tr>
+            <tr>
+                <th><label>內容簡介<span class="text-danger">*</span></label></th>
+                <th>
+                    <textarea class="form-control" data-val="true" data-val-required="此欄位必填" id="BookNote" name="BookNote" row="2" readonly="readonly"></textarea>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BookNote" data-valmsg-replace="true"></span>
+                </th>
+            </tr>
+            <tr>
+                <th><label>購書日期<span class="text-danger">*</span></label></th>
+                <th><input class="form-control" id="BookBoughtDate" name="BookBoughtDate" readonly="readonly"></th>
+            </tr>
+            <tr>
+                <th><label>圖書類別<span class="text-danger">*</span></label></th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookClassId" name="BookClassId" type="text" readonly="readonly">
+                </th>
+            </tr>
+            <tr>
+                <th><label>借閱狀態<span class="text-danger">*</span></label></th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="Status" name="Status" type="text" readonly="readonly">
+                </th>
+            </tr>
+            <tr>
+                <th><label>借閱人</label></th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="Keeper" name="Keeper" type="text" readonly="readonly">
+                </th>
+
+            </tr>
+        </thead>
+    </table>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            loadBookDataByID();
+        });
+
+        function loadBookDataByID() {
+            $.ajax({
+                type: "POST",
+                url: "/Book/GetBookDataByID" + window.location.search,
+                success: function (response) {
+                    $("#BookName").val(response.bookName);
+                    $("#BookAuthor").val(response.bookAuthor);
+                    $("#BookPublishier").val(response.bookPublishier);
+                    $("#BookNote").val(response.bookNote);
+                    $("#BookBoughtDate").val(response.bookBoughtDate);
+                    $("#BookClassId").val(response.bookClassID);
+                    $("#Status").val(response.status);
+                    $("#Keeper").val(response.keeper);
+                },
+            });
+
+        };
+
+    </script>
+}

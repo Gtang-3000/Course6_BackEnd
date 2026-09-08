@@ -1,0 +1,121 @@
+﻿<h1>Create</h1>
+<div class="row">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>
+                    <label>書名 <span class="text-danger">*</span></label>
+                </th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookName" name="BookName" type="text" value="">
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BookName" data-valmsg-replace="true"></span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <label>作者 <span class="text-danger">*</span></label>
+                </th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookAuthor" name="BookAuthor" type="text" value="">
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BookAuthor" data-valmsg-replace="true"></span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <label>出版商 <span class="text-danger">*</span></label>
+                </th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookPublishier" name="BookPublishier" type="text" value="">
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BookPublishier" data-valmsg-replace="true"></span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <label>內容簡介<span class="text-danger">*</span></label>
+                </th>
+                <th>
+                    <textarea class="form-control" data-val="true" data-val-required="此欄位必填" id="BookNote" name="BookNote" row="2"></textarea>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BookNote" data-valmsg-replace="true"></span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <label>購書日期<span class="text-danger">*</span></label>
+                </th>
+                <th>
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookBoughtDate" name="BookBoughtDate" type="date" value="">
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BookBoughtDate" data-valmsg-replace="true"></span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <label>圖書類別<span class="text-danger">*</span></label>
+                </th>
+                <th>
+                    <select class="form-select" data-val="true" data-val-required="此欄位必填" id="BookClassID" name="BookClassID"><option value="">請選擇</option></select>
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <div class="form-group">
+        <input type="submit" value="儲存" class="btn btn-primary btnSave" />
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            loadBookClassData();
+
+            $(".btnSave").click(function (e) {
+                if (!confirm("確定儲存嗎")) {
+                    e.preventDefault();
+                    return;
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/Book/Create",
+                    data: {
+                        BookName: $("#BookName").val(),
+                        BookAuthor: $("#BookAuthor").val(),
+                        BookPublishier: $("#BookPublishier").val(),
+                        BookNote: $("#BookNote").val(),
+                        BookBoughtDate: $("#BookBoughtDate").val(),
+                        BookClassID: $("#BookClassID").val()
+                    },
+                    success: function (response) {
+                        if (response == "") {
+                            alert("新增失敗");
+                            return;
+                        }
+                        if (confirm("新增完成\n跳轉到編輯?")) {
+                            window.location.href = "/Book/Update?BookID=" + response;
+                        }
+                        else {
+                            window.location.href = "/Book/Create";
+                        }
+
+
+                    },
+                });
+            });
+        });
+        function loadBookClassData() {
+            $.ajax({
+                type: "POST",
+                url: "/Book/GetBookClassSelectData",
+                success: function (response) {
+                    $("#BookClassID").kendoDropDownList({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: response,
+                        optionLabel: "請選擇",
+                        index: 0
+                    });
+                },
+            });
+        };
+    </script>
+}
+

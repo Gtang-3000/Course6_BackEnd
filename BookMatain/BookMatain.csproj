@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BookMatain.Common\BookMatain.Common.csproj" />
+    <ProjectReference Include="..\BookMatain.Modle\BookMatain.Modle.csproj" />
+    <ProjectReference Include="..\BookMatain.Service\BookMatain.Service.csproj" />
+  </ItemGroup>
+
+</Project>

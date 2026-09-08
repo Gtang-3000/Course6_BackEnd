@@ -1,0 +1,225 @@
+﻿<h1>Index</h1>
+<div class="row">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>書名</th>
+                <th><input class="form-control" id="BookName" name="BookName" type="text" value=""></th>
+            </tr>
+            <tr>
+                <th>類別</th>
+                <th><select class="form-select" id="BookClassId" name="BookClassId"><option value="">請選擇</option></select>
+            </tr>
+            <tr>
+                <th>借閱人</th>
+                <th><select class="form-select" id="BookKeeper" name="BookKeeper"><option value="">請選擇</option></select>
+            </tr>
+            <tr>
+                <th>狀態</th>
+                <th><select class="form-select" id="BookStatus" name="BookStatus"><option value="">請選擇</option></select>
+            </tr>
+            <tr>
+                <th>購買日期起迄</th>
+                <th>
+                    <div class="d-flex align-items-center gap-2">
+                        <input class="form-control" id="StartDate" name="StartDate">
+                        <span>~</span>
+                        <input class="form-control" id="EndDate" name="EndDate">
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+    </table>
+
+
+    <div class="from-group mb-3">
+
+        <button class="k-button k-primary " id="btnSearch">查詢</button>
+        <button class="k-button k-primary " id="btnCreat">新增</button>
+        <button class="k-button k-primary " id="btnClear">清除</button>
+
+    </div>
+
+    <div class="container-md">
+        <div id="book_grid" class="g-3"></div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            loadBookClassData();
+            loadBookStatusData();
+            loadBookKeeperData();
+
+            //表格
+            $("#book_grid").kendoGrid({
+                dataSource: {
+                    data: [],
+                    schema: {
+                        model: {
+                            fields: {
+                                bookName: { type: "string" },
+                                bookClassName: { type: "string" },
+                                bookKeeper: { type: "string" },
+                                bookStatus: { type: "string" },
+                                bookBoughtDate: { type: "string" }
+                            }
+                        }
+                    },
+                    pageSize: 20,
+                },
+                height: 550,
+                sortable: true,
+                pageable: {
+                    input: true,
+                    numeric: false
+                },
+                columns: [
+                    { field: "bookName", title: "書籍名稱", width: "35%"},
+                    { field: "bookClassName", title: "書籍種類", width: "20%" },
+                    { field: "bookKeeper", title: "借閱人", width: "15%" },
+                    { field: "bookStatus", title: "書籍狀態", width: "15%" },
+                    { field: "bookBoughtDate", title: "購買日期", width: "15%" },
+                    { command: [{ text: "編輯", click: goEdit }, { text: "刪除", click: Delete }], title: " ", width: "300px" }]
+            });
+
+            //按鈕
+            $("#btnSearch").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/Book/GetBookBySerch",
+                    data: {
+                        BookName: $("#BookName").val(),
+                        BookClassId: $("#BookClassId").val(),
+                        BookKeeper: $("#BookKeeper").val(),
+                        BookStatus: $("#BookStatus").val(),
+                        BookStartTime: $("#StartDate").val(),
+                        BookEndTime: $("#EndDate").val()
+                    },
+                    dataType: "JSON",
+                    success: function (response) {
+                        // 取得目前的 Kendo Grid
+                        var grid = $("#book_grid").data("kendoGrid");
+                        // 更新資料
+                        grid.dataSource.data(response);
+                        // 回到第一頁 grid.dataSource.page(1);
+                        grid.dataSource.page(1);
+                    },
+                });
+            });
+            $("#btnCreat").click(function () {
+                window.location = "Book/Create";
+            });
+            $("#btnClear").click(function () {
+                window.location = "";
+            });
+
+            $("#StartDate").kendoDatePicker({
+                format: "yyyy/MM/dd",
+                dateInput: true,
+                autoAdjust: false
+            });
+            $("#EndDate").kendoDatePicker({
+                format: "yyyy/MM/dd",
+                dateInput: true,
+                autoAdjust: false
+            });
+
+            //點擊grid表格跳轉到明細頁面
+            $("#book_grid").on('dblclick', '.k-grid-content tr', function (e) {
+                // 如果點到的是 .k-button（如編輯、刪除按鈕），就直接結束函式，不往下執行
+                if ($(e.target).closest('.k-button').length > 0) {
+                    return;
+                }
+                var data = $("#book_grid").data("kendoGrid").dataItem($(this));
+                window.location = "Book/Detail?bookID=" + data.bookID;
+            });
+        });
+
+        //grid裡的按鈕
+        function Delete(e) {
+            e.preventDefault();
+            var ThisBook = this.dataItem($(e.currentTarget).closest("tr"));
+            if (!confirm("確定刪除嗎")) {
+                return;
+            };
+            var ThisDataSource = this.dataSource;
+            $.ajax({
+                type: "POST",
+                url: "/Book/Delete",
+                data: {
+                    BookID: ThisBook.bookID,
+                },
+                success: function (response) {
+                    if (response) {
+                        ThisDataSource.remove(ThisBook);
+                        var currentDataCount = ThisDataSource.view().length;
+                        var currentPage = ThisDataSource.page();
+                        if (currentDataCount === 0 && currentPage > 1) {
+                            ThisDataSource.page(currentPage - 1);
+                        };
+                        alert("刪除完成");
+                    }
+                    else {
+                        alert("書被借走了 不能刪");
+                    }
+                },
+            });
+        };
+        function goEdit(e) {
+            e.preventDefault();
+            var ThisBook = this.dataItem($(e.currentTarget).closest("tr"));
+            window.location = "Book/update?bookID=" + ThisBook.bookID ;
+        };
+
+        //取得下拉選單資料
+        function loadBookClassData() {
+            $.ajax({
+                type: "POST",
+                url: "/Book/GetBookClassSelectData",
+                success: function (response) {
+                    $("#BookClassId").kendoDropDownList({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: response,
+                        optionLabel: "請選擇",
+                        index: 0
+                    });
+                },
+            });
+        };
+        function loadBookStatusData() {
+            $.ajax({
+                type: "POST",
+                url: "/Book/GetBookStatusSelectData",
+                success: function (response) {
+                    $("#BookStatus").kendoDropDownList({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: response,
+                        optionLabel: "請選擇",
+                        index: 0
+                    });
+                },
+            });
+        };
+        function loadBookKeeperData() {
+            $.ajax({
+                type: "POST",
+                url: "/Book/GetBookKeeperSelectData",
+                success: function (response) {
+                    $("#BookKeeper").kendoDropDownList({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: response,
+                        optionLabel: "請選擇",
+                        index: 0
+                    });
+                },
+            });
+        };
+    </script>
+}
