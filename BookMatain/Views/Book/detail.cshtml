@@ -1,7 +1,4 @@
 ﻿<h1>Detail</h1>
-@Html.ActionLink("首頁", "index", "Book", null, new { @class = "btn btn-primary" })
-
-
 <div class="row">
 
     <table class="table table-bordered table-striped">
@@ -38,19 +35,19 @@
             <tr>
                 <th><label>圖書類別<span class="text-danger">*</span></label></th>
                 <th>
-                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookClassId" name="BookClassId" type="text" readonly="readonly">
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="BookClassName" name="BookClassName" type="text" readonly="readonly">
                 </th>
             </tr>
             <tr>
                 <th><label>借閱狀態<span class="text-danger">*</span></label></th>
                 <th>
-                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="Status" name="Status" type="text" readonly="readonly">
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="StatusName" name="StatusName" type="text" readonly="readonly">
                 </th>
             </tr>
             <tr>
                 <th><label>借閱人</label></th>
                 <th>
-                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="Keeper" name="Keeper" type="text" readonly="readonly">
+                    <input class="form-control" data-val="true" data-val-required="此欄位必填" id="KeeperName" name="KeeperName" type="text" readonly="readonly">
                 </th>
 
             </tr>
@@ -77,12 +74,12 @@
                     $("#BookPublishier").val(response.bookPublishier);
                     $("#BookNote").val(response.bookNote);
                     $("#BookBoughtDate").val(response.bookBoughtDate);
-                    $("#BookClassId").val(response.bookClassID);
-                    $("#Status").val(response.status);
-                    $("#Keeper").val(response.keeper);
+                    $("#BookClassName").val(response.className);
+                    $("#StatusName").val(response.statusName);
+                    $("#KeeperName").val(response.keeperName);
+
                 },
             });
-
         };
 
     </script>

@@ -6,7 +6,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<BookMatain.Service.ICodeService, BookMatain.Service.CodeService>();
 builder.Services.AddScoped<BookMatain.Service.IBookService, BookMatain.Service.BookService>();
 
-builder.Services.AddScoped<BookMatain.Dao.ICodeDao, BookMatain.Dao.CodeDao>();
+builder.Services.AddScoped<BookMatain.Dao.ICodeDao, BookMatain.Dao.MockCodeDao>();
 builder.Services.AddScoped<BookMatain.Dao.IBookDao, BookMatain.Dao.BookDao >();
 
 
@@ -26,6 +26,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseMiddleware<BookMatain.MiddleWare.ErrorHandleMiddleware>();
+
 
 app.MapControllerRoute(
     name: "default",

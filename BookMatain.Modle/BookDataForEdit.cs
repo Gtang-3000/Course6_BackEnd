@@ -44,5 +44,9 @@ namespace BookMatain.Modle
         [Required(ErrorMessage = "此欄位必填")]
         public string? Status { get; set; }
         public string? Keeper { get; set; }
+        public string? KeeperName { get; set; }
+        public string? ClassName { get; set; }
+        public string? StatusName { get; set; }
+
     }
 }

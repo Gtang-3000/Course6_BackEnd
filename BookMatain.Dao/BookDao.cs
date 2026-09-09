@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -178,9 +179,11 @@ namespace BookMatain.Dao
             string sql = @"SELECT D.BOOK_NAME, D.BOOK_AUTHOR, D.BOOK_PUBLISHER, D.BOOK_NOTE, 
                                 CONVERT(varchar, D.BOOK_BOUGHT_DATE, 23) AS　BOUGHT_DATE,
                                 D.BOOK_CLASS_ID, D.BOOK_STATUS, D.BOOK_KEEPER, CONCAT(M.USER_CNAME,
-                                '(',M.USER_ENAME, ')') AS Keeper 
+                                '(',M.USER_ENAME, ')') AS Keeper, CLASS.BOOK_CLASS_NAME, CODE.CODE_NAME  
                             FROM BOOK_DATA AS D 
-                            LEFT JOIN MEMBER_M AS M ON D.BOOK_KEEPER = M.USER_ID 
+                                LEFT JOIN MEMBER_M AS M ON D.BOOK_KEEPER = M.USER_ID 
+                                INNER JOIN BOOK_CODE AS CODE ON CODE.CODE_ID = D.BOOK_STATUS
+                                INNER JOIN BOOK_CLASS AS CLASS ON CLASS.BOOK_CLASS_ID = D.BOOK_CLASS_ID
                             WHERE D.BOOK_ID = @BookID";
             BookDataForEdit result = new BookDataForEdit();
             using (SqlConnection conn = new SqlConnection(Common.ConfigTool.GetDBConnectionString()))
@@ -206,6 +209,10 @@ namespace BookMatain.Dao
                         BookClassID = row["BOOK_CLASS_ID"].ToString(),
                         Status = row["BOOK_STATUS"].ToString(),
                         Keeper = row["BOOK_KEEPER"].ToString(),
+                        KeeperName = row["Keeper"].ToString(),
+                        ClassName = row["BOOK_CLASS_NAME"].ToString(),
+                        StatusName = row["CODE_NAME"].ToString(),
+                        
                     };
                 }
             }
